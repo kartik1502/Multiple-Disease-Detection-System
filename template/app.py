@@ -302,4 +302,3 @@ if choice == 'Parkinson\'s Disease':
         fileStatus, file = functionalities.load_file()
         if fileStatus:
             functionalities.analysisReportUPDRS(file)
-
