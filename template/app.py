@@ -300,4 +300,6 @@ if choice == 'Parkinson\'s Disease':
     if option == 'Analysis Using UPDRS':
         fileStatus, file = functionalities.load_file()
         if fileStatus:
-            functionalities.analysisReportUPDRS(file)
+            requirement = st.selectbox("",['Prediction','Analysis Report'])
+            functionalities.action(requirement, file ,"parkinsons_udprs")
+            # functionalities.analysisReportUPDRS(file, "parkinsons_udprs")

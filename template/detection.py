@@ -49,6 +49,15 @@ def parkinsons_prediction(input_data):
 
     return parkinsons_model.predict(input_data_reshaped)
 
+def parkinsonsUpdrs_prediction(input_data):
+
+    parkinsons_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_parkinsons_udprs.sav', 'rb'))
+    
+    input_data = np.asarray(input_data, dtype=np.float64)
+    input_data_reshaped = input_data.reshape(1, -1)
+
+    return parkinsons_model.predict(input_data_reshaped)
+
 def chronic_detection(input_data):
 
     chronic_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_chronic_kidney.sav','rb'))
