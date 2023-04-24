@@ -42,7 +42,7 @@ def getModelRegerssion(model):
     return models[model]
 
 def parkinsons_prediction(input_data):
-    parkinsons_model = pickle.load(open('models/trained_model_parkinsons.sav', 'rb'))
+    parkinsons_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_parkinsons.sav', 'rb'))
     
     input_data = np.asarray(input_data, dtype=np.float64)
     input_data_reshaped = input_data.reshape(1, -1)
@@ -51,7 +51,7 @@ def parkinsons_prediction(input_data):
 
 def chronic_detection(input_data):
 
-    chronic_model = pickle.load(open('models/trained_model_chronic_kidney.sav','rb'))
+    chronic_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_chronic_kidney.sav','rb'))
     input_data = np.asarray(input_data, dtype=np.float64)
 
     input_data_reshaped = input_data.reshape(1, -1)
@@ -116,7 +116,13 @@ def displayConfusioMatrix(y, pred):
     st.image(img)
 
 def classificationReport(yTest, yPred):
-    return classification_report(yTest, yPred)
+    report = classification_report(yTest, yPred, digits=2)
+    for i in range(10):
+        report = report.replace(f'{i}.00\t', f'{i}%\t').replace(f'{i}.00\n', f'{i}%\n')
+    for i in range(1, 10):
+        report = report.replace(f'{i}0.0\t', f'{i}0%\t').replace(f'{i}0.0\n', f'{i}0%\n')
+    report = report.replace('100.0\t', '100%\t').replace('100.0\n', '100%\n')
+    return report
 
 def applyModelRegression(model, x, y):
     regressionModel = getModelRegerssion(model)
