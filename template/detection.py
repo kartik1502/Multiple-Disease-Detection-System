@@ -42,7 +42,7 @@ def getModelRegerssion(model):
     return models[model]
 
 def parkinsons_prediction(input_data):
-    parkinsons_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_parkinsons.sav', 'rb'))
+    parkinsons_model = pickle.load(open('models/trained_model_parkinsons.sav', 'rb'))
     
     input_data = np.asarray(input_data, dtype=np.float64)
     input_data_reshaped = input_data.reshape(1, -1)
@@ -51,7 +51,7 @@ def parkinsons_prediction(input_data):
 
 def chronic_detection(input_data):
 
-    chronic_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_chronic_kidney.sav','rb'))
+    chronic_model = pickle.load(open('models/trained_model_chronic_kidney.sav','rb'))
     input_data = np.asarray(input_data, dtype=np.float64)
 
     input_data_reshaped = input_data.reshape(1, -1)
