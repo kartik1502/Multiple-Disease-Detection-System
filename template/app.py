@@ -5,7 +5,7 @@ from streamlit_option_menu import option_menu
 import streamlit_toggle as tog
 import functionalities
 
-st.set_page_config(page_title="Disease Detection Application", page_icon="https://img.icons8.com/color/48/null/caduceus.png")
+st.set_page_config(page_title="Disease Detection Application", page_icon="https://img.icons8.com/color/48/null/caduceus.png", layout="wide")
 
 with st.sidebar:
     choice = option_menu('Multiple Disease Detection',['Chronic Kidney Disease','Parkinson\'s Disease'])
