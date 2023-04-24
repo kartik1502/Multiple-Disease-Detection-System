@@ -8,7 +8,7 @@ import functionalities
 st.set_page_config(page_title="Disease Detection Application", page_icon="https://img.icons8.com/color/48/null/caduceus.png")
 
 with st.sidebar:
-    choice = option_menu('Multiple Disease Detection',['Parkinson\'s Disease', 'Chronic Kidney Disease'])
+    choice = option_menu('Multiple Disease Detection',['Chronic Kidney Disease','Parkinson\'s Disease'])
 
 if choice == 'Chronic Kidney Disease':
     st.title("Chronic Kidney Disease Detection")
