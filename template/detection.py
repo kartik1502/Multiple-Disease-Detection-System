@@ -27,20 +27,6 @@ def getmodelClassification(model):
     }
     return models[model]
 
-def getModelRegerssion(model):
-
-    svm_regressor = MultiOutputRegressor(SVR(kernel='rbf', C=100, gamma=0.1, epsilon=.1))
-    xgb_regressor = MultiOutputRegressor(XGBRegressor(objective='reg:squarederror', n_estimators=100, learning_rate=0.1, max_depth=3))
-    rf_regressor = MultiOutputRegressor(RandomForestRegressor(n_estimators=100, max_depth=5, random_state=42))
-
-    models = {
-
-        "SVM" : svm_regressor,
-        "Random Forest" : rf_regressor,
-        "XGBoost" : xgb_regressor
-    }
-    return models[model]
-
 def parkinsons_prediction(input_data):
     parkinsons_model = pickle.load(open('C:/Users/karti/Disease Detection/models/trained_model_parkinsons.sav', 'rb'))
     
@@ -80,26 +66,6 @@ def applyKFold(splits, x, y):
 
     return rf_scores, svm_scores, xgb_scores
 
-def applyKFoldRegression(model, x, y, splits):
-
-    mse_scores = -cross_val_score(getModelRegerssion(model), x, y, cv=int(splits), scoring='neg_mean_squared_error')
-    mae_scores = -cross_val_score(getModelRegerssion(model), x, y, cv=int(splits), scoring='neg_mean_absolute_error')
-    r2_scores = cross_val_score(getModelRegerssion(model), x, y, cv=int(splits), scoring='r2')
-    kFoldResultRegression(mse_scores, mae_scores, r2_scores, model)
-
-def kFoldResultRegression(mse_scores, mae_scores, r2_scores, model):
-    st.markdown("The Mean Squared Error scores for "+model+":")
-    st.write(mse_scores.reshape(1, -1))
-    st.write("The Root mean squared error(RMSE) is: ")
-    st.write(+np.sqrt(np.mean(mse_scores)))
-    st.markdown("The Mean Absolute Error scores for "+model+":")
-    st.write(mae_scores.reshape(1, -1))
-    st.markdown("The mean of the Mean absolute error is: ")
-    st.write(np.mean(mae_scores))
-    st.markdown("The Co - efficient of Determination(R2) scores for "+model+":")
-    st.write(r2_scores.reshape(1, -1))
-    st.markdown("The mean of R2 - scores is: ")
-    st.write(np.mean(r2_scores))
     
 def kFoldResult(model):
     return model.reshape(1, -1), (model.mean()*100)
@@ -132,39 +98,3 @@ def classificationReport(yTest, yPred):
         report = report.replace(f'{i}0.0\t', f'{i}0%\t').replace(f'{i}0.0\n', f'{i}0%\n')
     report = report.replace('100.0\t', '100%\t').replace('100.0\n', '100%\n')
     return report
-
-def applyModelRegression(model, x, y):
-    regressionModel = getModelRegerssion(model)
-    xTrain, xTest, yTrain, yTest = splittingDataset(x, y)
-    regressionModel.fit(xTrain, yTrain)
-    preds_test = regressionModel.predict(xTest)
-
-    svm_mse = mean_squared_error(yTest, preds_test)
-    svm_mae = mean_absolute_error(yTest, preds_test)
-    svm_r2 = r2_score(yTest, preds_test)
-    svm_rmse = np.sqrt(svm_mse)
-
-    st.write("The Mean Squared Error for the "+model+" :")
-    st.write(svm_mse)
-    st.write("The Root Mean Squared Error for the "+model+" :")
-    st.write(svm_rmse)
-    st.write("The Mean Absolute Error for the "+model+" :")
-    st.write(svm_mae)
-    st.write("The Co - efficient of Determination(R2) for the "+model+" :")
-    st.write(svm_r2)
-    barChart([svm_rmse, svm_mae, svm_r2], model)
-
-def barChart(values, model):
-    metrics = ['RMSE', 'MAE', 'R2']
-    fig = plt.figure(figsize=(6,4))
-    bar_width = 0.5
-    plt.bar(np.arange(len(metrics)), values, bar_width)
-    plt.xticks(np.arange(len(metrics)), metrics)
-    plt.title('Evaluation Metrics for '+model+' Regression Model')
-    plt.xlabel('Metric')
-    plt.ylabel('Value')
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png')
-    buf.seek(0)
-    img = Image.open(buf)
-    st.image(img)
