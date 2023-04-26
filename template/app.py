@@ -34,4 +34,3 @@ if choice == 'Parkinson\'s Disease':
         if fileStatus:
             requirement = st.selectbox("",['Prediction','Analysis Report'])
             functionalities.action(requirement, file ,"parkinsons_udprs")
-            # functionalities.analysisReportUPDRS(file, "parkinsons_udprs")

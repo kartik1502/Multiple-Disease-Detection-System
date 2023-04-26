@@ -6,14 +6,11 @@ from PIL import Image
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.svm import SVC, SVR
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.metrics import accuracy_score, r2_score, mean_squared_error, mean_absolute_error
-from sklearn.multioutput import MultiOutputRegressor
-from xgboost import XGBClassifier, XGBRegressor
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
 import streamlit as st
-
-
 
 def getmodelClassification(model):
 
@@ -91,10 +88,4 @@ def displayConfusioMatrix(y, pred):
     st.image(img)
 
 def classificationReport(yTest, yPred):
-    report = classification_report(yTest, yPred, digits=2)
-    for i in range(10):
-        report = report.replace(f'{i}.00\t', f'{i}%\t').replace(f'{i}.00\n', f'{i}%\n')
-    for i in range(1, 10):
-        report = report.replace(f'{i}0.0\t', f'{i}0%\t').replace(f'{i}0.0\n', f'{i}0%\n')
-    report = report.replace('100.0\t', '100%\t').replace('100.0\n', '100%\n')
-    return report
+    return classification_report(yTest, yPred, digits=2)
