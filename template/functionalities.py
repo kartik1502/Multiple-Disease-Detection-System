@@ -49,52 +49,47 @@ def action(requirement, file, disease):
     if targetVariable not in df.columns:
         st.error("The provided target variable is not present in the dataset")
     else:
-        ignore_variables = st.text_input("Enter the variable that has to ignored in the prediction(if there are multiple seperate them with \",\" comma\'s").split(",")
+        if show_info:
+            st.write(df.drop(targetVariable, axis=1).head())
+        variable = st.text_input("Enter the variable that has to ignored in the prediction")
         flag = True
         labelEncoderStatus = False
         imputerStatus = False
-        col_indexs = list()
-        col_removed = list()
-        if show_info:
-            st.write(df.head())
-        for variable in ignore_variables:
-            variable = variable.strip()
-            if variable != "" and variable not in df.columns:
-                st.write(variable)
-                st.error("The provided variable is not present in the dataset")
-                flag = False
-                break
-            elif(variable != ""):
-                col_indexs.append(df.columns.get_loc(variable))
-                col_removed.append(df[variable])
-                df = df.drop(variable, axis=1)
-                for column in df.columns:
-                    if df[column].dtype == 'object':
-                        labelEncoderStatus = True
-                if labelEncoderStatus:
-                    labelEncoder = st.checkbox('Apply Label Encoder', value=False)
-                    if labelEncoder:
-                        for column in df.columns:
-                            if df[column].dtype == 'object':
-                                le = LabelEncoder()
-                                df[column] = le.fit_transform(df[column])
-                                labelEncoderStatus = False
-                        if show_info:
-                            st.write(df.head())
-                if df.isna().any().any():
-                    imputerStatus = True
-                    imputer = st.checkbox('Apply Imputer', value=False)
-                    if imputer:
-                        imputer = SimpleImputer(strategy="most_frequent")
-                        imputer.fit(df)
-                        df = pd.DataFrame(imputer.transform(df), columns=df.columns)
-                        imputerStatus = False
-            else:
-                for attribute in df.columns:
-                    if isinstance(attribute, str):
-                        st.error("There are variables which cannot be used for the analysis")
-                        flag = False
-                        break
+        if variable != "" and variable not in df.columns:
+            st.write(variable)
+            st.error("The provided variable is not present in the dataset")
+            flag = False
+        elif(variable != ""):
+            col_indexs = df.columns.get_loc(variable)
+            col_removed = df[variable]
+            df = df.drop(variable, axis=1)
+            for column in df.columns:
+                if df[column].dtype == 'object':
+                    labelEncoderStatus = True
+            if labelEncoderStatus:
+                labelEncoder = st.checkbox('Apply Label Encoder', value=False)
+                if labelEncoder:
+                    for column in df.columns:
+                        if df[column].dtype == 'object':
+                            le = LabelEncoder()
+                            df[column] = le.fit_transform(df[column])
+                            labelEncoderStatus = False
+                    if show_info:
+                        st.write(df.drop(targetVariable, axis=1).head())
+            if df.isna().any().any():
+                imputerStatus = True
+                imputer = st.checkbox('Apply Imputer', value=False)
+                if imputer:
+                    imputer = SimpleImputer(strategy="most_frequent")
+                    imputer.fit(df)
+                    df = pd.DataFrame(imputer.transform(df), columns=df.columns)
+                    imputerStatus = False
+        else:
+            for attribute in df.columns:
+                if isinstance(attribute, str):
+                    st.error("There are variables which cannot be used for the analysis")
+                    flag = False
+                    break
         if disease == 'parkinsons_udprs':
             labels = [0, 1]
             df['severity'] = pd.cut(df[targetVariable], bins=bins, labels=labels)
@@ -103,7 +98,7 @@ def action(requirement, file, disease):
         else:
             y = df[targetVariable]
             df = df.drop(targetVariable, axis=1)
-        if show_info and disease == 'parkinsons_udprs':
+        if show_info and disease == 'parkinsons_udprs' and flag:
             st.write(df.head())
         if flag:
             x = df
@@ -112,7 +107,7 @@ def action(requirement, file, disease):
             elif imputerStatus:
                 st.error("Imputer is required")
             elif requirement == 'Prediction':
-                prediction(df, disease, col_indexs, ignore_variables, col_removed, show_info)
+                prediction(df, disease, col_indexs, variable, col_removed, show_info)
             elif requirement == 'Analysis Report':
                 analysisReport(disease, x, y)
     # else:
@@ -138,8 +133,7 @@ def prediction(df, disease, col_indexs, ignore_variables, col_removed, show_info
                 df.at[index, 'result'] = 'Not diseased'
             else:
                 df.at[index, 'result'] = 'Diseased'
-    for i in range(len(col_indexs)):
-        df.insert(col_indexs[i], ignore_variables[i], col_removed[i])
+    df.insert(col_indexs, ignore_variables, col_removed)
     if show_info:
         st.write(df.head())
     df.to_csv('updated_data.csv', index=False)
